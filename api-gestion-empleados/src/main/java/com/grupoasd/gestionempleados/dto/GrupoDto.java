@@ -1,7 +1,7 @@
 package com.grupoasd.gestionempleados.dto;
 
-import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonInclude;
+import java.util.List;
 
 /**
  *
@@ -13,7 +13,7 @@ public class GrupoDto {
     /**
      * Campo grupo_id.
      */
-    private long grupoId;
+    private Long grupoId;
 
     /**
      * Campo nombre.
@@ -28,12 +28,17 @@ public class GrupoDto {
     /**
      * Campo fecha_registro.
      */
-    private Date fechaRegistro;
+    private String fechaRegistro;
 
     /**
      * Campo fecha_modificacion.
      */
-    private Date fechaModificacion;
+    private String fechaModificacion;
+
+    /**
+     * lista empleados.
+     */
+    private List<EmpleadoDto> empleados;
 
     /**
      * Campo mensaje.
@@ -43,7 +48,7 @@ public class GrupoDto {
     public GrupoDto() {
     }
 
-    public GrupoDto(String nombre, String direccion, Date fechaRegistro, Date fechaModificacion, String mensaje) {
+    public GrupoDto(String nombre, String direccion, String fechaRegistro, String fechaModificacion, String mensaje) {
         this.nombre = nombre;
         this.direccion = direccion;
         this.fechaRegistro = fechaRegistro;
@@ -55,11 +60,11 @@ public class GrupoDto {
         this.mensaje = mensaje;
     }
 
-    public long getGrupoId() {
+    public Long getGrupoId() {
         return grupoId;
     }
 
-    public void setGrupoId(long grupoId) {
+    public void setGrupoId(Long grupoId) {
         this.grupoId = grupoId;
     }
 
@@ -79,20 +84,28 @@ public class GrupoDto {
         this.direccion = direccion;
     }
 
-    public Date getFechaRegistro() {
+    public String getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(String fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public Date getFechaModificacion() {
+    public String getFechaModificacion() {
         return fechaModificacion;
     }
 
-    public void setFechaModificacion(Date fechaModificacion) {
+    public void setFechaModificacion(String fechaModificacion) {
         this.fechaModificacion = fechaModificacion;
+    }
+
+    public List<EmpleadoDto> getEmpleados() {
+        return empleados;
+    }
+
+    public void setEmpleados(List<EmpleadoDto> empleados) {
+        this.empleados = empleados;
     }
 
     public String getMensaje() {

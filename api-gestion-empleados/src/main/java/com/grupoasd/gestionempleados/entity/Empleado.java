@@ -2,15 +2,11 @@ package com.grupoasd.gestionempleados.entity;
 
 import java.io.Serializable;
 import java.util.List;
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 
@@ -65,13 +61,9 @@ public class Empleado implements Serializable {
     @Column(name = "estado")
     private boolean estado;
 
-    @ManyToMany(fetch = FetchType.EAGER, cascade = CascadeType.MERGE)
-    @JoinTable(
-            name = "empleados_grupos",
-            joinColumns = @JoinColumn(name = "empleado_id"),
-            inverseJoinColumns = @JoinColumn(name = "grupo_id")
-    )
-    private List<Grupo> grupos;
+    
+    @ManyToMany(mappedBy = "empleados")
+    private List<Grupo> grupo;
 
     public Empleado() {
     }
@@ -194,21 +186,21 @@ public class Empleado implements Serializable {
     }
 
     /**
-     * Get the value of grupos
+     * Get the value of grupo
      *
-     * @return the value of grupos
+     * @return the value of grupo
      */
-    public List<Grupo> getGrupos() {
-        return grupos;
+    public List<Grupo> getGrupo() {
+        return grupo;
     }
 
     /**
-     * Set the value of grupos
+     * Set the value of grupo
      *
-     * @param grupos new value of grupos
+     * @param grupo new value of grupo
      */
-    public void setGrupos(List<Grupo> grupos) {
-        this.grupos = grupos;
+    public void setGrupo(List<Grupo> grupo) {
+        this.grupo = grupo;
     }
 
 }

@@ -2,10 +2,10 @@ package com.grupoasd.gestionempleados.controllers;
 
 import com.grupoasd.gestionempleados.dto.GrupoDto;
 import com.grupoasd.gestionempleados.service.GrupoService;
+import io.swagger.annotations.ApiParam;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RestController;
-import java.util.ArrayList;
 import java.util.List;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -13,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestMethod;
-
 
 @RestController
 @RequestMapping("/api/1.0/grupos")
@@ -34,7 +33,24 @@ public class GrupoController {
             List<GrupoDto> list = grupoService.getGrupos();
             return ResponseEntity.ok(list);
         } catch (Exception ex) {
-            return new ResponseEntity<>(new ArrayList<>(), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    /**
+     * Metodo que permite un grupo de la BD.
+     *
+     * @author Victor Bocanegra
+     * @param grupoId int
+     * @return GrupoDto
+     */
+    @RequestMapping(value = "/{grupoId}", method = RequestMethod.GET, produces = "application/json")
+    public ResponseEntity<GrupoDto> getGrupo(@ApiParam(value = "grupoId", required = true) @PathVariable int grupoId) {
+        try {
+            GrupoDto gru = grupoService.getGrupo(Long.valueOf(grupoId));
+            return new ResponseEntity(gru, HttpStatus.OK);
+        } catch (Exception ex) {
+            return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -51,9 +67,9 @@ public class GrupoController {
             request = grupoService.createGrupo(request);
             return ResponseEntity.ok(request);
         } catch (IllegalArgumentException ex) {
-            return new ResponseEntity<>(new GrupoDto(ex.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {
-            return new ResponseEntity<>(new GrupoDto(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -64,15 +80,15 @@ public class GrupoController {
      * @param grupoId Long
      * @return GrupoDto
      */
-    @RequestMapping(value = "/delete/{equipoId}", method = RequestMethod.DELETE, produces = "application/json")
-    public ResponseEntity<GrupoDto> delete(@PathVariable("grupoId") long grupoId) {
+    @RequestMapping(value = "/delete/{grupoId}", method = RequestMethod.DELETE, produces = "application/json")
+    public ResponseEntity<GrupoDto> delete(@PathVariable("grupoId") int grupoId) {
         try {
-            GrupoDto delete = grupoService.deleteGrupo(grupoId);
+            GrupoDto delete = grupoService.deleteGrupo(Long.valueOf(grupoId));
             return ResponseEntity.ok(delete);
         } catch (EmptyResultDataAccessException ex) {
-            return new ResponseEntity<>(new GrupoDto(ex.getMessage()), HttpStatus.NOT_FOUND);
+            return new ResponseEntity(ex.getMessage(), HttpStatus.NOT_FOUND);
         } catch (Exception ex) {
-            return new ResponseEntity<>(new GrupoDto(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -85,14 +101,14 @@ public class GrupoController {
      * @return GrupoDto
      */
     @RequestMapping(value = "/update/{grupoId}", method = RequestMethod.PUT, produces = "application/json")
-    public ResponseEntity<GrupoDto> create(@PathVariable("grupoId") Long grupoId, @RequestBody GrupoDto request) {
+    public ResponseEntity<GrupoDto> update(@PathVariable("grupoId") Long grupoId, @RequestBody GrupoDto request) {
         try {
             request = grupoService.updateGrupo(grupoId, request);
             return ResponseEntity.ok(request);
         } catch (IllegalArgumentException ex) {
-            return new ResponseEntity<>(new GrupoDto(ex.getMessage()), HttpStatus.BAD_REQUEST);
+            return new ResponseEntity(ex.getMessage(), HttpStatus.BAD_REQUEST);
         } catch (Exception ex) {
-            return new ResponseEntity<>(new GrupoDto(ex.getMessage()), HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity(ex.getMessage(), HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 

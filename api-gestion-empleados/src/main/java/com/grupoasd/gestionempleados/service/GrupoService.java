@@ -8,7 +8,6 @@ package com.grupoasd.gestionempleados.service;
 import com.grupoasd.gestionempleados.dto.GrupoDto;
 import java.util.List;
 
-
 /**
  *
  * @author vbocanegra
@@ -23,6 +22,15 @@ public interface GrupoService {
      * @return GrupoDto
      */
     GrupoDto createGrupo(GrupoDto grupoDto);
+
+    /**
+     * Metodo que retorna un grupo en BD.
+     *
+     * @author Victor Bocanegra
+     * @param id Long
+     * @return GrupoDto
+     */
+    GrupoDto getGrupo(Long id);
 
     /**
      * Metodo que retorna listado de todos los grupos en BD.

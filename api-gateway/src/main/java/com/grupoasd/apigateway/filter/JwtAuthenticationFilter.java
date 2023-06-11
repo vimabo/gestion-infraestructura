@@ -19,43 +19,41 @@ import reactor.core.publisher.Mono;
 @Component
 public class JwtAuthenticationFilter implements GatewayFilter {
 
-	@Autowired
-	private JwtUtil jwtUtil;
+    @Autowired
+    private JwtUtil jwtUtil;
 
-	@Override
-	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-		ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
+    @Override
+    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+        ServerHttpRequest request = (ServerHttpRequest) exchange.getRequest();
 
-		final List<String> apiEndpoints = List.of("/register", "/login");
+        final List<String> apiEndpoints = List.of("/register", "/login");
 
-		Predicate<ServerHttpRequest> isApiSecured = r -> apiEndpoints.stream()
-				.noneMatch(uri -> r.getURI().getPath().contains(uri));
+        Predicate<ServerHttpRequest> isApiSecured = r -> apiEndpoints.stream()
+                .noneMatch(uri -> r.getURI().getPath().contains(uri));
 
-		if (isApiSecured.test(request)) {
-			if (!request.getHeaders().containsKey("Authorization")) {
-				ServerHttpResponse response = exchange.getResponse();
-				response.setStatusCode(HttpStatus.UNAUTHORIZED);
+        if (isApiSecured.test(request)) {
+            if (!request.getHeaders().containsKey("Authorization")) {
+                ServerHttpResponse response = exchange.getResponse();
+                response.setStatusCode(HttpStatus.UNAUTHORIZED);
 
-				return response.setComplete();
-			}
+                return response.setComplete();
+            }
 
-			final String token = request.getHeaders().getOrEmpty("Authorization").get(0);
+            final String token = request.getHeaders().getOrEmpty("Authorization").get(0);
 
-			try {
-				jwtUtil.validateToken(token);
-			} catch (JwtTokenMalformedException | JwtTokenMissingException e) {
-				// e.printStackTrace();
+            try {
+                jwtUtil.validateToken(token);
+            } catch (JwtTokenMalformedException | JwtTokenMissingException e) {
+                ServerHttpResponse response = exchange.getResponse();
+                response.setStatusCode(HttpStatus.BAD_REQUEST);
+                return response.setComplete();
+            }
 
-				ServerHttpResponse response = exchange.getResponse();
-				response.setStatusCode(HttpStatus.BAD_REQUEST);
-				return response.setComplete();
-			}
+            Claims claims = jwtUtil.getClaims(token);
+            exchange.getRequest().mutate().header("id", String.valueOf(claims.get("id"))).build();
+        }
 
-			Claims claims = jwtUtil.getClaims(token);
-			exchange.getRequest().mutate().header("id", String.valueOf(claims.get("id"))).build();
-		}
-
-		return chain.filter(exchange);
-	}
+        return chain.filter(exchange);
+    }
 
 }

@@ -3,12 +3,16 @@ package com.grupoasd.gestionempleados.entity;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
+import javax.persistence.CascadeType;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
@@ -60,19 +64,24 @@ public class Grupo implements Serializable {
     @Temporal(TemporalType.TIMESTAMP)
     @Column(name = "fecha_modificacion")
     private Date fechaModificacion;
-    
 
-    @ManyToMany(mappedBy = "grupos")
+    @JoinTable(
+            name = "empleados_grupos",
+            joinColumns = @JoinColumn(name = "grupo_id", nullable = false),
+            inverseJoinColumns = @JoinColumn(name = "empleado_id", nullable = false)
+    )
+    @ManyToMany(cascade = CascadeType.ALL)
     private List<Empleado> empleados;
 
     public Grupo() {
     }
 
-    public Grupo(String nombre, String direccion, Date fechaRegistro, Date fechaModificacion) {
+    public Grupo(String nombre, String direccion, Date fechaRegistro, Date fechaModificacion, List<Empleado> empleados ) {
         this.nombre = nombre;
         this.direccion = direccion;
         this.fechaRegistro = fechaRegistro;
         this.fechaModificacion = fechaModificacion;
+        this.empleados = empleados;
     }
 
     /**

@@ -14,40 +14,48 @@ import com.grupoasd.gestionempleados.dto.EmpleadoDto;
  */
 public interface EmpleadoService {
 
-	/**
-	 * Metodo que permite la creacion de un empleado.
-	 *
-	 * @author Victor Bocanegra
-	 * @param empleadoDto EmpleadoDto
-	 * @return EmpleadoDto
-	 */
-	EmpleadoDto createEmpleado(EmpleadoDto empleadoDto);
+    /**
+     * Metodo que permite la creacion de un empleado.
+     *
+     * @author Victor Bocanegra
+     * @param empleadoDto EmpleadoDto
+     */
+    void createEmpleado(EmpleadoDto empleadoDto);
 
-	/**
-	 * Metodo que retorna listado de todos los empleados en BD.
-	 *
-	 * @author Victor Bocanegra
-	 * @return List EmpleadoDto
-	 */
-	List<EmpleadoDto> getEmpleados();
+    /**
+     * Metodo que retorna listado de todos los empleados en BD.
+     *
+     * @author Victor Bocanegra
+     * @return List EmpleadoDto
+     */
+    List<EmpleadoDto> getEmpleados();
 
-	/**
-	 * Metodo que permite la actualizacion de un empleado.
-	 *
-	 * @author Victor Bocanegra
-	 * @param idEmpleado  Long
-	 * @param empleadoDto EmpleadoDto
-	 * @return EmpleadoDto
-	 */
-	EmpleadoDto updateEmpleado(Long idEmpleado, EmpleadoDto empleadoDto);
+    /**
+     * Metodo que retorna un empleado por id en BD.
+     *
+     * @author Victor Bocanegra
+     * @param id Long
+     * @return List EmpleadoDto
+     */
+    EmpleadoDto getEmpleado(Long id);
 
-	/**
-	 * Metodo que permite la eliminacion de un empleado en BD.
-	 *
-	 * @author Victor Bocanegra
-	 * @param idEmpleado Long
-	 * @return EmpleadoDto
-	 */
-	EmpleadoDto deleteEmpleado(Long idEmpleado);
+    /**
+     * Metodo que permite la actualizacion de un empleado.
+     *
+     * @author Victor Bocanegra
+     * @param idEmpleado Long
+     * @param empleadoDto EmpleadoDto
+     * @return EmpleadoDto
+     */
+    EmpleadoDto updateEmpleado(Long idEmpleado, EmpleadoDto empleadoDto);
+
+    /**
+     * Metodo que permite la eliminacion de un empleado en BD.
+     *
+     * @author Victor Bocanegra
+     * @param idEmpleado Long
+     * @return EmpleadoDto
+     */
+    EmpleadoDto deleteEmpleado(Long idEmpleado);
 
 }

@@ -9,118 +9,114 @@ import com.fasterxml.jackson.annotation.JsonInclude;
 @JsonInclude(JsonInclude.Include.NON_NULL)
 public class EmpleadoDto {
 
-	/**
-	 * Campo empleado_id.
-	 */
-	private long empleadoId;
+    /**
+     * Campo empleado_id.
+     */
+    private long empleadoId;
 
-	/**
-	 * Campo nombre_completo.
-	 */
-	private String nombreCompleto;
+    /**
+     * Campo nombre_completo.
+     */
+    private String nombreCompleto;
 
-	/**
-	 * Campo tipo_documento.
-	 */
-	private String tipoDocumento;
+    /**
+     * Campo tipo_documento.
+     */
+    private String tipoDocumento;
 
-	/**
-	 * Campo numero_documento.
-	 */
-	private String numeroDocumento;
+    /**
+     * Campo numero_documento.
+     */
+    private String numeroDocumento;
 
-	/**
-	 * Campo email.
-	 */
-	private String email;
+    /**
+     * Campo email.
+     */
+    private String email;
 
-	/**
-	 * Campo estado.
-	 */
-	private boolean estado;
+    /**
+     * Campo estado.
+     */
+    private String estado;
 
-	/**
-	 * Campo mensaje.
-	 */
-	private String mensaje;
-	
+    /**
+     * Campo mensaje.
+     */
+    private String mensaje;
+
     public EmpleadoDto() {
     }
-    
-    
-	
+
     public EmpleadoDto(long empleadoId, String nombreCompleto, String tipoDocumento, String numeroDocumento,
-			String email, boolean estado, String mensaje) {
-		super();
-		this.empleadoId = empleadoId;
-		this.nombreCompleto = nombreCompleto;
-		this.tipoDocumento = tipoDocumento;
-		this.numeroDocumento = numeroDocumento;
-		this.email = email;
-		this.estado = estado;
-		this.mensaje = mensaje;
-	}
-
-
-
-	public EmpleadoDto(String mensaje) {
+            String email, String estado, String mensaje) {
+        super();
+        this.empleadoId = empleadoId;
+        this.nombreCompleto = nombreCompleto;
+        this.tipoDocumento = tipoDocumento;
+        this.numeroDocumento = numeroDocumento;
+        this.email = email;
+        this.estado = estado;
         this.mensaje = mensaje;
     }
 
-	public long getEmpleadoId() {
-		return empleadoId;
-	}
+    public EmpleadoDto(String mensaje) {
+        this.mensaje = mensaje;
+    }
 
-	public void setEmpleadoId(long empleadoId) {
-		this.empleadoId = empleadoId;
-	}
+    public long getEmpleadoId() {
+        return empleadoId;
+    }
 
-	public String getNombreCompleto() {
-		return nombreCompleto;
-	}
+    public void setEmpleadoId(long empleadoId) {
+        this.empleadoId = empleadoId;
+    }
 
-	public void setNombreCompleto(String nombreCompleto) {
-		this.nombreCompleto = nombreCompleto;
-	}
+    public String getNombreCompleto() {
+        return nombreCompleto;
+    }
 
-	public String getTipoDocumento() {
-		return tipoDocumento;
-	}
+    public void setNombreCompleto(String nombreCompleto) {
+        this.nombreCompleto = nombreCompleto;
+    }
 
-	public void setTipoDocumento(String tipoDocumento) {
-		this.tipoDocumento = tipoDocumento;
-	}
+    public String getTipoDocumento() {
+        return tipoDocumento;
+    }
 
-	public String getNumeroDocumento() {
-		return numeroDocumento;
-	}
+    public void setTipoDocumento(String tipoDocumento) {
+        this.tipoDocumento = tipoDocumento;
+    }
 
-	public void setNumeroDocumento(String numeroDocumento) {
-		this.numeroDocumento = numeroDocumento;
-	}
+    public String getNumeroDocumento() {
+        return numeroDocumento;
+    }
 
-	public String getEmail() {
-		return email;
-	}
+    public void setNumeroDocumento(String numeroDocumento) {
+        this.numeroDocumento = numeroDocumento;
+    }
 
-	public void setEmail(String email) {
-		this.email = email;
-	}
+    public String getEmail() {
+        return email;
+    }
 
-	public boolean isEstado() {
-		return estado;
-	}
+    public void setEmail(String email) {
+        this.email = email;
+    }
 
-	public void setEstado(boolean estado) {
-		this.estado = estado;
-	}
+    public String getEstado() {
+        return estado;
+    }
 
-	public String getMensaje() {
-		return mensaje;
-	}
+    public void setEstado(String estado) {
+        this.estado = estado;
+    }
 
-	public void setMensaje(String mensaje) {
-		this.mensaje = mensaje;
-	}
+    public String getMensaje() {
+        return mensaje;
+    }
+
+    public void setMensaje(String mensaje) {
+        this.mensaje = mensaje;
+    }
 
 }
