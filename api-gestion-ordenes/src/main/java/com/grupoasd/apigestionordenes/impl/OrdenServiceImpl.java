@@ -16,6 +16,7 @@ import com.grupoasd.apigestionordenes.entity.Orden;
 import com.grupoasd.apigestionordenes.enumeraciones.EstadoEquipoEnum;
 import com.grupoasd.apigestionordenes.enumeraciones.EstadoOrdenEnum;
 import com.grupoasd.apigestionordenes.service.OrdenService;
+import com.grupoasd.apigestionordenes.util.Token;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -273,21 +274,23 @@ public class OrdenServiceImpl implements OrdenService {
         return result;
     }
 
-    public String consultarToken() {
+    public Token consultarToken() {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<>(userToken, headers);
         return restTemplate.
                 exchange(apiToken,
-                        HttpMethod.POST, entity, String.class).getBody();
+                        HttpMethod.POST, entity, Token.class).getBody();
     }
 
     public List<String> consultarCorreos(Orden orden, boolean control) {
 
         List<String> correos = null;
         HttpHeaders headers = new HttpHeaders();
-        headers.add("Authorization", consultarToken());
+        Token token = consultarToken();
+        log.info(token.getToken());
+        headers.add("Authorization", token.getToken());
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
         HttpEntity<String> entity = new HttpEntity<>(headers);
 

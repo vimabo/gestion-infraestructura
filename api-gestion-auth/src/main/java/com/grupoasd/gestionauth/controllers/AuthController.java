@@ -1,6 +1,7 @@
 package com.grupoasd.gestionauth.controllers;
 
 import com.grupoasd.gestionauth.util.JwtUtil;
+import com.grupoasd.gestionauth.util.Token;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,8 +18,9 @@ public class AuthController {
     private JwtUtil jwtUtil;
 
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<String> login(@RequestBody String userName) {
+    public ResponseEntity<Token> login(@RequestBody String userName) {
         String token = jwtUtil.generateToken(userName);
-        return new ResponseEntity<>(token, HttpStatus.OK);
+        Token res = new Token(token);
+        return new ResponseEntity<>(res, HttpStatus.OK);
     }
 }
