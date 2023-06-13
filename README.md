@@ -1,9 +1,14 @@
 # gestion-infraestructura
 Proyecto para la gestion de equipos de infraestructura:
+
 Spring Gateway
+
 Spring Boot 
+
 Maven 
+
 Mysql
+
 JWT
 
 # Instrucciones para construir el proyecto
