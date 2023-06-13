@@ -19,7 +19,7 @@ public class SwaggerConfig {
 	public Docket apiDocket() {
 		return new Docket(DocumentationType.SWAGGER_2)
 				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.grupoasd.gestionordenes.controllers"))
+				.apis(RequestHandlerSelectors.basePackage("com.grupoasd.apigestionordenes.controllers"))
 				.paths(PathSelectors.any())
 				.build()
 				.apiInfo(getApiInfo())
@@ -28,8 +28,8 @@ public class SwaggerConfig {
 	
 	private ApiInfo getApiInfo() {
 		return new ApiInfo(
-				"Equipos Service API",
-				"Servicios para la gestión de equipos de infraestructura",
+				"Ordenes Service API",
+				"Servicios para la gestión de ordenes de infraestructura",
 				"1.0",
 				"https://www.grupoasd.com/politica-de-privacidad/",
 				new Contact("Grupo ASD", "https://www.grupoasd.com/", "https://www.grupoasd.com/"),

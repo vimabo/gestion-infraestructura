@@ -63,6 +63,9 @@ public class OrdenServiceImpl implements OrdenService {
 
     @Value("${api.service.grupos}")
     private String apiGrupos;
+    
+    @Value("${user.auth.token}")
+    private String userToken;
 
     SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
@@ -107,7 +110,7 @@ public class OrdenServiceImpl implements OrdenService {
     @Transactional
     public OrdenDto createOrden(OrdenDto ordenDto) {
 
-        OrdenDto result = null;
+        OrdenDto result;
         validacionesOrden(ordenDto, true);
         EstadoOrdenEnum estado = EstadoOrdenEnum.getValueOf(ordenDto.getEstado());
         List<Equipo> equipos = null;
@@ -274,7 +277,7 @@ public class OrdenServiceImpl implements OrdenService {
 
         HttpHeaders headers = new HttpHeaders();
         headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
-        HttpEntity<String> entity = new HttpEntity<>("Boca", headers);
+        HttpEntity<String> entity = new HttpEntity<>(userToken, headers);
         return restTemplate.
                 exchange(apiToken,
                         HttpMethod.POST, entity, String.class).getBody();

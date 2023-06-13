@@ -1,6 +1,5 @@
 package com.grupoasd.apigestionordenes.dto;
 
-import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;
 
