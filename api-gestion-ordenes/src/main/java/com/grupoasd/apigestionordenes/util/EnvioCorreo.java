@@ -69,6 +69,7 @@ public class EnvioCorreo {
 		 * Get the Session object passing userid and password
          */
         Session session = Session.getInstance(properties, new javax.mail.Authenticator() {
+            @Override
             protected PasswordAuthentication getPasswordAuthentication() {
                 return new PasswordAuthentication(remitente, clave);
             }

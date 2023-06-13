@@ -35,10 +35,8 @@ public class JwtAuthenticationFilter implements GatewayFilter {
             if (!request.getHeaders().containsKey("Authorization")) {
                 ServerHttpResponse response = exchange.getResponse();
                 response.setStatusCode(HttpStatus.UNAUTHORIZED);
-
                 return response.setComplete();
             }
-
             final String token = request.getHeaders().getOrEmpty("Authorization").get(0);
 
             try {
@@ -48,11 +46,9 @@ public class JwtAuthenticationFilter implements GatewayFilter {
                 response.setStatusCode(HttpStatus.BAD_REQUEST);
                 return response.setComplete();
             }
-
             Claims claims = jwtUtil.getClaims(token);
             exchange.getRequest().mutate().header("id", String.valueOf(claims.get("id"))).build();
         }
-
         return chain.filter(exchange);
     }
 

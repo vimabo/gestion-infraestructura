@@ -15,27 +15,26 @@ import springfox.documentation.swagger2.annotations.EnableSwagger2;
 @EnableSwagger2
 public class SwaggerConfig {
 
-	@Bean
-	public Docket apiDocket() {
-		return new Docket(DocumentationType.SWAGGER_2)
-				.select()
-				.apis(RequestHandlerSelectors.basePackage("com.grupoasd.gestionempleados.controllers"))
-				.paths(PathSelectors.any())
-				.build()
-				.apiInfo(getApiInfo())
-				;
-	}
-	
-	private ApiInfo getApiInfo() {
-		return new ApiInfo(
-				"Empleados Service API",
-				"Servicios para la gestión de empleados",
-				"1.0",
-				"https://www.grupoasd.com/politica-de-privacidad/",
-				new Contact("Grupo ASD", "https://www.grupoasd.com/", "https://www.grupoasd.com/"),
-				"LICENSE",
-				"LICENSE URL",
-				Collections.emptyList()
-				);
-	}
+    @Bean
+    public Docket apiDocket() {
+        return new Docket(DocumentationType.SWAGGER_2)
+                .select()
+                .apis(RequestHandlerSelectors.basePackage("com.grupoasd.gestionempleados.controllers"))
+                .paths(PathSelectors.any())
+                .build()
+                .apiInfo(getApiInfo());
+    }
+
+    private ApiInfo getApiInfo() {
+        return new ApiInfo(
+                "Empleados Service API",
+                "Servicios para la gestión de empleados",
+                "1.0",
+                "https://www.grupoasd.com/politica-de-privacidad/",
+                new Contact("Grupo ASD", "https://www.grupoasd.com/", "https://www.grupoasd.com/"),
+                "LICENSE",
+                "LICENSE URL",
+                Collections.emptyList()
+        );
+    }
 }

@@ -19,15 +19,6 @@ public class AuthController {
     @RequestMapping(value = "/login", method = RequestMethod.POST, produces = "application/json")
     public ResponseEntity<String> login(@RequestBody String userName) {
         String token = jwtUtil.generateToken(userName);
-
         return new ResponseEntity<>(token, HttpStatus.OK);
-    }
-
-    @RequestMapping(value = "/register", method = RequestMethod.POST, produces = "application/json")
-    public ResponseEntity<String> register(@RequestBody String userName) {
-        // Persist user to some persistent storage
-        System.out.println("Info saved...");
-
-        return new ResponseEntity<>("Registered", HttpStatus.OK);
     }
 }
