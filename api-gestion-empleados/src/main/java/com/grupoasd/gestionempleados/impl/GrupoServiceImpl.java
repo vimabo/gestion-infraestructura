@@ -21,6 +21,7 @@ import java.util.stream.Collectors;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -45,6 +46,7 @@ public class GrupoServiceImpl implements GrupoService {
      * @return GrupoDto
      */
     @Override
+    @Transactional
     public GrupoDto createGrupo(GrupoDto grupoDto) {
 
         GrupoDto result = null;
@@ -96,6 +98,7 @@ public class GrupoServiceImpl implements GrupoService {
      * @return GrupoDto
      */
     @Override
+    @Transactional
     public GrupoDto updateGrupo(Long idGrupo, GrupoDto grupoDto) {
 
         GrupoDto result = null;

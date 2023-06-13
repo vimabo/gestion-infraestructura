@@ -1,4 +1,4 @@
-package com.grupoasd.gestionempleados.dto;
+package com.grupoasd.apigestionordenes.dto;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import java.util.List;

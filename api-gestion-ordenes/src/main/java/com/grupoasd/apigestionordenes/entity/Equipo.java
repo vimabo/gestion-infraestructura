@@ -13,7 +13,6 @@ import javax.persistence.Id;
 import javax.persistence.Table;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
-
 import com.grupoasd.apigestionordenes.enumeraciones.EstadoEquipoEnum;
 import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
@@ -73,6 +72,13 @@ public class Equipo implements Serializable {
     private EstadoEquipoEnum estado;
 
     /**
+     * Campo estado.
+     */
+    @Column(name = "estado_original")
+    @Enumerated(value = EnumType.ORDINAL)
+    private EstadoEquipoEnum estadoOriginal;
+
+    /**
      * Campo orden_id.
      */
     @ManyToOne(fetch = FetchType.LAZY)
@@ -89,6 +95,7 @@ public class Equipo implements Serializable {
         this.codigoBarras = codigoBarras;
         this.fechaRegistro = fechaRegistro;
         this.estado = estado;
+        this.estadoOriginal = estado;
     }
 
     /**
@@ -215,6 +222,24 @@ public class Equipo implements Serializable {
      */
     public void setOrden(Orden orden) {
         this.orden = orden;
+    }
+
+    /**
+     * Get the value of estadoOriginal
+     *
+     * @return the value of estadoOriginal
+     */
+    public EstadoEquipoEnum getEstadoOriginal() {
+        return estadoOriginal;
+    }
+
+    /**
+     * Set the value of estadoOriginal
+     *
+     * @param estadoOriginal new value of estadoOriginal
+     */
+    public void setEstadoOriginal(EstadoEquipoEnum estadoOriginal) {
+        this.estadoOriginal = estadoOriginal;
     }
 
 }

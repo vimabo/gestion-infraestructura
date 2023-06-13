@@ -2,7 +2,7 @@ package com.grupoasd.apigestionordenes.dto;
 
 import java.util.Date;
 import com.fasterxml.jackson.annotation.JsonInclude;
-import com.grupoasd.apigestionordenes.enumeraciones.EstadoOrdenEnum;
+import java.util.List;
 
 /**
  *
@@ -24,17 +24,32 @@ public class OrdenDto {
     /**
      * Campo fecha_registro.
      */
-    private Date fechaRegistro;
+    private String fechaRegistro;
 
     /**
      * Campo fecha_modificacion.
      */
-    private Date fechaModificacion;
+    private String fechaModificacion;
 
     /**
      * Campo estado.
      */
-    private Long estado;
+    private String estado;
+
+    /**
+     * Campo equipos.
+     */
+    private List<EquipoDto> equipos;
+
+    /**
+     * Campo empleado_id.
+     */
+    private long empleadoId;
+
+    /**
+     * Campo grupo_id.
+     */
+    private long grupoId;
 
     /**
      * Campo mensaje.
@@ -44,7 +59,8 @@ public class OrdenDto {
     public OrdenDto() {
     }
 
-    public OrdenDto(String descripcion, Date fechaRegistro, Date fechaModificacion, Long estado, String mensaje) {
+    public OrdenDto(String descripcion, String fechaRegistro, String fechaModificacion, String estado,
+            String mensaje) {
         this.descripcion = descripcion;
         this.fechaRegistro = fechaRegistro;
         this.fechaModificacion = fechaModificacion;
@@ -72,28 +88,52 @@ public class OrdenDto {
         this.descripcion = descripcion;
     }
 
-    public Date getFechaRegistro() {
+    public String getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(String fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public Date getFechaModificacion() {
+    public String getFechaModificacion() {
         return fechaModificacion;
     }
 
-    public void setFechaModificacion(Date fechaModificacion) {
+    public void setFechaModificacion(String fechaModificacion) {
         this.fechaModificacion = fechaModificacion;
     }
 
-    public Long getEstado() {
+    public String getEstado() {
         return estado;
     }
 
-    public void setEstado(Long estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public List<EquipoDto> getEquipos() {
+        return equipos;
+    }
+
+    public void setEquipos(List<EquipoDto> equipos) {
+        this.equipos = equipos;
+    }
+
+    public long getEmpleadoId() {
+        return empleadoId;
+    }
+
+    public void setEmpleadoId(long empleadoId) {
+        this.empleadoId = empleadoId;
+    }
+
+    public long getGrupoId() {
+        return grupoId;
+    }
+
+    public void setGrupoId(long grupoId) {
+        this.grupoId = grupoId;
     }
 
     public String getMensaje() {

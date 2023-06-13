@@ -21,4 +21,32 @@ public interface OrdenService {
      * @return List OrdenDto
      */
     List<OrdenDto> getOrdenes();
+
+    /**
+     * Metodo que permite la creacion de una orden.
+     *
+     * @author Victor Bocanegra
+     * @param ordenDto OrdenDto
+     * @return OrdenDto
+     */
+    OrdenDto createOrden(OrdenDto ordenDto);
+
+    /**
+     * Metodo que retorna una orden de la BD.
+     *
+     * @author Victor Bocanegra
+     * @param ordenId Long
+     * @return List OrdenDto
+     */
+    OrdenDto getOrden(Long ordenId);
+
+    /**
+     * Metodo que permite la actualizacion de una orden.
+     *
+     * @author Victor Bocanegra
+     * @param idOrden Long
+     * @param ordenDto OrdenDto
+     * @return OrdenDto
+     */
+    OrdenDto updateOrden(Long idOrden, OrdenDto ordenDto);
 }

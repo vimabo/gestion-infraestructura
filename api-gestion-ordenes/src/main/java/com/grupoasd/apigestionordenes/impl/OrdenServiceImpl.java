@@ -7,20 +7,32 @@ package com.grupoasd.apigestionordenes.impl;
 
 import com.grupoasd.apigestionordenes.dao.EquipoDao;
 import com.grupoasd.apigestionordenes.dao.OrdenDao;
+import com.grupoasd.apigestionordenes.dto.EmpleadoDto;
 import com.grupoasd.apigestionordenes.dto.EquipoDto;
+import com.grupoasd.apigestionordenes.dto.GrupoDto;
 import com.grupoasd.apigestionordenes.dto.OrdenDto;
 import com.grupoasd.apigestionordenes.entity.Equipo;
 import com.grupoasd.apigestionordenes.entity.Orden;
 import com.grupoasd.apigestionordenes.enumeraciones.EstadoEquipoEnum;
+import com.grupoasd.apigestionordenes.enumeraciones.EstadoOrdenEnum;
 import com.grupoasd.apigestionordenes.service.OrdenService;
-
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.dao.EmptyResultDataAccessException;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.http.HttpEntity;
+import org.springframework.http.HttpHeaders;
+import org.springframework.http.HttpMethod;
+import org.springframework.http.MediaType;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.client.RestTemplate;
 
 /**
  *
@@ -29,178 +41,269 @@ import org.springframework.stereotype.Service;
 @Service
 public class OrdenServiceImpl implements OrdenService {
 
-	@Autowired
-	private OrdenDao ordenDao;
-        
-        
-        
-        /**
-	 * Metodo que retorna listado de todas las ordenes en BD.
-	 *
-	 * @author Victor Bocanegra
-	 * @return List OrdenDto
-	 */
-	@Override
-	public List<OrdenDto> getOrdenes() {
+    private static final org.slf4j.Logger log = LoggerFactory.getLogger(OrdenServiceImpl.class);
 
-		List<Orden> list = ordenDao.findAll();
-		List<OrdenDto> result = new ArrayList<>();
-		for (Orden orden : list) {
-			OrdenDto dto = new OrdenDto();
-			dto.setOrdenId(orden.getOrdenId());
-			dto.setDescripcion(orden.getDescripcion());
-			dto.setFechaRegistro(orden.getFechaRegistro());
-			dto.setFechaModificacion(orden.getFechaModificacion());
-			dto.setEstado(orden.getEstado().getId());
-			result.add(dto);
-		}
-		return result;
-	}
+    @Autowired
+    private OrdenDao ordenDao;
 
-	/**
-	 * Metodo que permite la creacion de un equipo.
-	 *
-	 * @author Victor Bocanegra
-	 * @param equipoDto EquipoDto
-	 * @return EquipoDto
-	 */
-	/*@Override
-	public EquipoDto createEquipo(EquipoDto equipoDto) {
+    @Autowired
+    private EquipoDao equipoDao;
 
-		EquipoDto result = null;
-		validacionesEquipo(equipoDto, null);
-		EstadoEquipoEnum estado = EstadoEquipoEnum.getValueOf(equipoDto.getEstado());
-		Equipo entity = new Equipo(equipoDto.getNombre(), equipoDto.getMarca(),
-				equipoDto.getCodigoBarras(), new Date(), estado);
-		entity = equipoDao.save(entity);
-		if (entity != null) {
-			result = new EquipoDto();
-			result.setEquipoId(entity.getEquipoId());
-			result.setNombre(entity.getNombre());
-			result.setMarca(entity.getMarca());
-			result.setCodigoBarras(entity.getCodigoBarras());
-			result.setFechaRegistro(entity.getFechaRegistro());
-			result.setEstado(entity.getEstado().getId());
-			result.setMensaje("Equipo creado satisfatoriamente");
-		} else {
-			throw new IllegalArgumentException("Ocurrio un error al momento de crear el equipo");
-		}
+    @Autowired
+    private AsyncEmailService emailService;
 
-		return result;
-	}
+    @Autowired
+    private RestTemplate restTemplate;
 
-	public void validacionesEquipo(EquipoDto equipoDto, Long idEquipo) {
+    @Value("${api.service.token}")
+    private String apiToken;
 
-		if (equipoDto.getNombre() == null || equipoDto.getNombre().isEmpty()) {
-			throw new IllegalArgumentException("El Nombre del equipo es obligatorio");
+    @Value("${api.service.empleados}")
+    private String apiEmpleados;
 
-		}
-		if (equipoDto.getMarca() == null || equipoDto.getMarca().isEmpty()) {
-			throw new IllegalArgumentException("La Marca del equipo es obligatorio");
+    @Value("${api.service.grupos}")
+    private String apiGrupos;
 
-		}
-		if (equipoDto.getCodigoBarras() == null || equipoDto.getCodigoBarras().isEmpty()) {
-			throw new IllegalArgumentException("El Codigo de Barra es obligatorio");
+    SimpleDateFormat format = new SimpleDateFormat("yyyy/MM/dd HH:mm:ss");
 
-		}
+    private final String mensaje = "La orden de servicio No: %d cambia a estado: %s";
 
-		if (equipoDto.getEstado() == null) {
-			throw new IllegalArgumentException("El Estado del equipo es obligatorio");
+    /**
+     * Metodo que retorna listado de todas las ordenes en BD.
+     *
+     * @author Victor Bocanegra
+     * @return List OrdenDto
+     */
+    @Override
+    public List<OrdenDto> getOrdenes() {
 
-		}
+        List<Orden> list = ordenDao.findAll();
+        List<OrdenDto> result = new ArrayList<>();
+        list.stream().map((orden) -> {
+            OrdenDto dto = new OrdenDto();
+            dto.setOrdenId(orden.getOrdenId());
+            dto.setDescripcion(orden.getDescripcion());
+            dto.setFechaRegistro(orden.getFechaRegistro() != null ? format.format(orden.getFechaRegistro()) : null);
+            dto.setFechaModificacion(orden.getFechaModificacion() != null ? format.format(orden.getFechaModificacion()) : null);
+            dto.setEquipos(returnListDto(orden.getEquipos()));
+            dto.setEmpleadoId(orden.getEmpleado());
+            dto.setGrupoId(orden.getGrupo());
+            dto.setEstado(orden.getEstado().getNombre());
+            return dto;
+        }).forEachOrdered((dto) -> {
+            result.add(dto);
+        });
+        return result;
+    }
 
-		if (idEquipo == null) {
-			Optional<Equipo> consulta = equipoDao.findByCodigoBarras(equipoDto.getCodigoBarras());
-			if (!consulta.isEmpty()) {
-				throw new IllegalArgumentException(
-						"Ya existe un equipo con codigo de barras: " + equipoDto.getCodigoBarras() + "");
-			}
-		} else {
-			Optional<Equipo> consulta = equipoDao.findByCodigoBarrasAndId(equipoDto.getCodigoBarras(), idEquipo);
-			if (!consulta.isEmpty()) {
-				throw new IllegalArgumentException(
-						"Ya existe un equipo con codigo de barras:" + equipoDto.getCodigoBarras() + "");
-			}
+    /**
+     * Metodo que permite la creacion de una orden.
+     *
+     * @author Victor Bocanegra
+     * @param ordenDto OrdenDto
+     * @return OrdenDto
+     */
+    @Override
+    @Transactional
+    public OrdenDto createOrden(OrdenDto ordenDto) {
 
-		}
-	}
+        OrdenDto result = null;
+        validacionesOrden(ordenDto, true);
+        EstadoOrdenEnum estado = EstadoOrdenEnum.getValueOf(ordenDto.getEstado());
+        List<Equipo> equipos = null;
+        Orden entity = new Orden(ordenDto.getDescripcion(), estado, new Date(), new Date(),
+                ordenDto.getEmpleadoId(), ordenDto.getGrupoId());
+        entity = ordenDao.save(entity);
+        List<String> correos = null;
+        if (entity.getEmpleado() != 0) {
+            correos = consultarCorreos(entity, true);
+        } else if (entity.getGrupo() != 0) {
+            correos = consultarCorreos(entity, false);
+        }
+        emailService.enviarCorreoService(correos, String.format(mensaje, entity.getOrdenId(), estado.getNombre()));
 
-	/**
-	 * Metodo que permite la actualizacion de un equipo.
-	 *
-	 * @author Victor Bocanegra
-	 * @param idEquipo  Long
-	 * @param equipoDto EquipoDto
-	 * @return EquipoDto
-	 */
-	/*@Override
-	public EquipoDto updateEquipo(Long idEquipo, EquipoDto equipoDto) {
+        result = new OrdenDto();
+        result.setOrdenId(entity.getOrdenId());
+        result.setDescripcion(entity.getDescripcion());
+        result.setFechaRegistro(entity.getFechaRegistro() != null ? format.format(entity.getFechaRegistro()) : null);
+        result.setFechaModificacion(entity.getFechaModificacion() != null ? format.format(entity.getFechaModificacion()) : null);
+        result.setEstado(entity.getEstado().getNombre());
+        result.setEmpleadoId(entity.getEmpleado());
+        result.setGrupoId(entity.getGrupo());
+        if (ordenDto.getEquipos() != null && !ordenDto.getEquipos().isEmpty()) {
+            List<Long> filteredList = ordenDto.getEquipos().stream()
+                    .map(EquipoDto::getEquipoId)
+                    .collect(Collectors.toList());
 
-		EquipoDto result = null;
-		validacionesEquipo(equipoDto, idEquipo);
+            equipos = equipoDao.findEquiposById(filteredList);
+            final Orden create = entity;
 
-		Optional<Equipo> update = equipoDao.findById(idEquipo);
+            equipos = equipos.stream().map(i -> {
+                i.setOrden(create);
+                i.setEstado(EstadoEquipoEnum.EQUIPO_OCUPADO);
+                return i;
+            }).collect(Collectors.toList());
 
-		if (update != null) {
-			Equipo save = update.get();
-			save.setNombre(equipoDto.getNombre());
-			save.setMarca(equipoDto.getMarca());
-			save.setCodigoBarras(equipoDto.getCodigoBarras());
-			EstadoEquipoEnum estado = EstadoEquipoEnum.getValueOf(equipoDto.getEstado());
-			save.setEstado(estado);
-			save.setFechaRegistro(equipoDto.getFechaRegistro());
-			equipoDao.save(save);
-			result = new EquipoDto(save.getEquipoId(), save.getNombre(), save.getMarca(), save.getCodigoBarras(),
-					save.getFechaRegistro(), save.getEstado().getId(), "Equipo actualizado satisfatoriamente");
+            equipoDao.saveAll(equipos);
 
-		} else {
-			throw new IllegalArgumentException("No existe el equipo en BD");
-		}
+        }
+        result.setEquipos(returnListDto(equipos));
+        result.setMensaje("Orden creada satisfatoriamente");
 
-		return result;
-	}*/
+        return result;
+    }
 
-	/**
-	 * Metodo que retorna listado de todos los equipos en BD.
-	 *
-	 * @author Victor Bocanegra
-	 * @return List EquipoDto
-	 */
-	/*@Override
-	public List<EquipoDto> getEquipos() {
+    public void validacionesOrden(OrdenDto ordenDto, boolean create) {
 
-		List<Equipo> list = equipoDao.findAll();
-		List<EquipoDto> result = new ArrayList<>();
-		for (Equipo equipo : list) {
-			EquipoDto dto = new EquipoDto();
-			dto.setEquipoId(equipo.getEquipoId());
-			dto.setNombre(equipo.getNombre());
-			dto.setMarca(equipo.getMarca());
-			dto.setCodigoBarras(equipo.getCodigoBarras());
-			dto.setFechaRegistro(equipo.getFechaRegistro());
-			dto.setEstado(equipo.getEstado().getId());
-			result.add(dto);
-		}
-		return result;
-	}
+        if (ordenDto.getDescripcion() == null || ordenDto.getDescripcion().isEmpty()) {
+            throw new IllegalArgumentException("La descripción de la orden es obligatoria");
+        }
+        if (create) {
+            if (ordenDto.getEstado() == null || ordenDto.getEstado().isEmpty()) {
+                throw new IllegalArgumentException("El estado de la orden del es obligatorio");
+            }
+            if (ordenDto.getEquipos() == null || ordenDto.getEquipos().isEmpty()) {
+                throw new IllegalArgumentException("Debe asignar al menos un equipo a la orden");
+            }
+            if (ordenDto.getEmpleadoId() == 0 && ordenDto.getGrupoId() == 0) {
+                throw new IllegalArgumentException("Debe asignar la orden a  un empleado o a un grupo");
+            }
+        }
+    }
 
-	/**
-	 * Metodo que permite la eliminacion de un equipo en BD.
-	 *
-	 * @author Victor Bocanegra
-	 * @param idEquipo Long
-	 * @return EquipoDto
-	 */
-	/*@Override
-	public EquipoDto deleteEquipo(Long idEquipo) {
-		EquipoDto result = new EquipoDto();
-		try {
-			equipoDao.deleteById(idEquipo);
-			result.setMensaje("Equipo Eliminado satisfatoriamente");
-		} catch (EmptyResultDataAccessException ex) {
-			result.setMensaje("No existe Equipo con la informaciòn ingresada");
-		}
-		return result;
-	}*/
+    public List<EquipoDto> returnListDto(List<Equipo> equipos) {
+        List<EquipoDto> result = new ArrayList<>();
+        equipos.stream().map((equipo) -> {
+            EquipoDto dto = new EquipoDto();
+            dto.setEquipoId(equipo.getEquipoId());
+            dto.setNombre(equipo.getNombre());
+            dto.setMarca(equipo.getMarca());
+            dto.setCodigoBarras(equipo.getCodigoBarras());
+            dto.setFechaRegistro(equipo.getFechaRegistro() != null ? format.format(equipo.getFechaRegistro()) : null);
+            dto.setEstado(equipo.getEstado().getNombre());
+            dto.setOrdenId(equipo.getOrden() != null ? equipo.getOrden().getOrdenId() : 0);
+            return dto;
+        }).forEachOrdered((dto) -> {
+            result.add(dto);
+        });
+        return result;
+    }
 
+    /**
+     * Metodo que retorna una orden de la BD.
+     *
+     * @author Victor Bocanegra
+     * @param ordenId Long
+     * @return List OrdenDto
+     */
+    @Override
+    public OrdenDto getOrden(Long ordenId) {
+
+        Optional<Orden> orden = ordenDao.findById(ordenId);
+        OrdenDto result = null;
+
+        if (orden.isPresent()) {
+            result = new OrdenDto();
+            result.setOrdenId(orden.get().getOrdenId());
+            result.setDescripcion(orden.get().getDescripcion());
+            result.setFechaRegistro(orden.get().getFechaRegistro() != null ? format.format(orden.get().getFechaRegistro()) : null);
+            result.setFechaModificacion(orden.get().getFechaModificacion() != null ? format.format(orden.get().getFechaModificacion()) : null);
+            result.setEquipos(returnListDto(orden.get().getEquipos()));
+            result.setEmpleadoId(orden.get().getEmpleado());
+            result.setGrupoId(orden.get().getGrupo());
+            result.setEstado(orden.get().getEstado().getNombre());
+        } else {
+            throw new IllegalArgumentException("No existe la orden en BD.");
+        }
+        return result;
+    }
+
+    /**
+     * Metodo que permite la actualizacion de una orden.
+     *
+     * @author Victor Bocanegra
+     * @param idOrden Long
+     * @param ordenDto OrdenDto
+     * @return OrdenDto
+     */
+    @Override
+    public OrdenDto updateOrden(Long idOrden, OrdenDto ordenDto) {
+
+        OrdenDto result = null;
+        validacionesOrden(ordenDto, false);
+
+        Optional<Orden> update = ordenDao.findById(idOrden);
+
+        if (update != null) {
+            Orden save = update.get();
+            save.setDescripcion(ordenDto.getDescripcion());
+            EstadoOrdenEnum estado = EstadoOrdenEnum.getValueOf(ordenDto.getEstado());
+            //PREGUNTAR ESTADO Y ENVIAR CORREO
+            if (estado.equals(EstadoOrdenEnum.EN_PROCESO) || estado.equals(EstadoOrdenEnum.FINALIZADA)) {
+                //Envio correo
+                //Buscar los destinos en el otro micro
+                List<String> correos = null;
+                if (save.getEmpleado() != 0) {
+                    correos = consultarCorreos(save, true);
+                } else if (save.getGrupo() != 0) {
+                    correos = consultarCorreos(save, false);
+                }
+                emailService.enviarCorreoService(correos, String.format(mensaje, save.getOrdenId(), estado.getNombre()));
+                if (estado.equals(EstadoOrdenEnum.FINALIZADA)) {
+                    List<Equipo> equipos = save.getEquipos();
+                    equipos = equipos.stream().map(i -> {
+                        i.setEstado(i.getEstadoOriginal());
+                        i.setOrden(null);
+                        return i;
+                    }).collect(Collectors.toList());
+                    equipoDao.saveAll(equipos);
+                }
+            }
+            save.setEstado(estado);
+            save.setFechaModificacion(new Date());
+            ordenDao.save(save);
+            result = new OrdenDto(save.getDescripcion(), save.getEstado().getNombre(), format.format(save.getFechaRegistro()),
+                    format.format(save.getFechaModificacion()), "Orden actualizada satisfatoriamente");
+        } else {
+            throw new IllegalArgumentException("No existe la orden en BD");
+        }
+        return result;
+    }
+
+    public String consultarToken() {
+
+        HttpHeaders headers = new HttpHeaders();
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<>("Boca", headers);
+        return restTemplate.
+                exchange(apiToken,
+                        HttpMethod.POST, entity, String.class).getBody();
+    }
+
+    public List<String> consultarCorreos(Orden orden, boolean control) {
+
+        List<String> correos = null;
+        HttpHeaders headers = new HttpHeaders();
+        headers.add("Authorization", consultarToken());
+        headers.setAccept(Arrays.asList(MediaType.APPLICATION_JSON));
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        if (control) {
+            EmpleadoDto response = restTemplate.
+                    exchange(apiEmpleados + orden.getEmpleado(),
+                            HttpMethod.GET, entity, EmpleadoDto.class).getBody();
+            correos = Arrays.asList(response != null ? response.getEmail() : "");
+        } else {
+            GrupoDto response = restTemplate.
+                    exchange(apiGrupos + orden.getGrupo(),
+                            HttpMethod.GET, entity, GrupoDto.class).getBody();
+
+            if (response != null && response.getEmpleados() != null) {
+                correos = response.getEmpleados().stream()
+                        .map(EmpleadoDto::getEmail)
+                        .collect(Collectors.toList());
+            }
+        }
+        return correos;
+    }
 }

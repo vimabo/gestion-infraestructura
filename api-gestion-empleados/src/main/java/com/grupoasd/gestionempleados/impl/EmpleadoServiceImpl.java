@@ -15,6 +15,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 /**
  *
@@ -33,6 +34,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
      * @param empleadoDto EmpleadoDto
      */
     @Override
+    @Transactional
     public void createEmpleado(EmpleadoDto empleadoDto) {
         validacionesEmpleado(empleadoDto, null);
         Empleado entity = new Empleado(empleadoDto.getNombreCompleto(), empleadoDto.getTipoDocumento(),
@@ -95,6 +97,7 @@ public class EmpleadoServiceImpl implements EmpleadoService {
      * @return EmpleadoDto
      */
     @Override
+    @Transactional
     public EmpleadoDto updateEmpleado(Long idEmpleado, EmpleadoDto empleadoDto) {
 
         EmpleadoDto result = null;

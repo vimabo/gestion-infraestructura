@@ -16,10 +16,7 @@ import javax.persistence.TemporalType;
 import com.grupoasd.apigestionordenes.enumeraciones.EstadoOrdenEnum;
 import java.util.List;
 import javax.persistence.CascadeType;
-import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
-import javax.persistence.OneToOne;
-
 
 /**
  *
@@ -72,16 +69,15 @@ public class Orden implements Serializable {
     /**
      * Campo empleado_id.
      */
-    @OneToOne
-    @JoinColumn(name = "empleado_id")
-    private Empleado empleado;
+    @Column(name = "empleado_id")
+    private Long empleado;
 
     /**
      * Campo grupo_id.
      */
-    @OneToOne
-    @JoinColumn(name = "grupo_id")
-    private Grupo grupo;
+    @Column(name = "grupo_id")
+    private Long grupo;
+    
 
     @OneToMany(cascade = CascadeType.ALL, mappedBy = "orden")
     private List<Equipo> equipos;
@@ -89,7 +85,9 @@ public class Orden implements Serializable {
     public Orden() {
     }
 
-    public Orden(String descripcion, Date fechaRegistro, Date fechaModificacion, EstadoOrdenEnum estado, Empleado empleado, Grupo grupo) {
+    public Orden(String descripcion, EstadoOrdenEnum estado,
+            Date fechaRegistro, Date fechaModificacion,
+            Long empleado, Long grupo) {
         this.descripcion = descripcion;
         this.fechaRegistro = fechaRegistro;
         this.fechaModificacion = fechaModificacion;
@@ -193,7 +191,7 @@ public class Orden implements Serializable {
      *
      * @return the value of empleado
      */
-    public Empleado getEmpleado() {
+    public Long getEmpleado() {
         return empleado;
     }
 
@@ -202,7 +200,7 @@ public class Orden implements Serializable {
      *
      * @param empleado new value of empleado
      */
-    public void setEmpleado(Empleado empleado) {
+    public void setEmpleado(Long empleado) {
         this.empleado = empleado;
     }
 
@@ -211,7 +209,7 @@ public class Orden implements Serializable {
      *
      * @return the value of grupo
      */
-    public Grupo getGrupo() {
+    public Long getGrupo() {
         return grupo;
     }
 
@@ -220,14 +218,14 @@ public class Orden implements Serializable {
      *
      * @param grupo new value of grupo
      */
-    public void setGrupo(Grupo grupo) {
+    public void setGrupo(Long grupo) {
         this.grupo = grupo;
     }
 
     /**
-     * Get the value of equipos
+     * Get the value of grupo
      *
-     * @return the value of equipos
+     * @return the value of grupo
      */
     public List<Equipo> getEquipos() {
         return equipos;

@@ -3,11 +3,8 @@ package com.grupoasd.gestionempleados.entity;
 import java.io.Serializable;
 import java.util.Date;
 import java.util.List;
-import javax.persistence.CascadeType;
-
 import javax.persistence.Column;
 import javax.persistence.Entity;
-import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -70,7 +67,7 @@ public class Grupo implements Serializable {
             joinColumns = @JoinColumn(name = "grupo_id", nullable = false),
             inverseJoinColumns = @JoinColumn(name = "empleado_id", nullable = false)
     )
-    @ManyToMany(cascade = CascadeType.ALL)
+    @ManyToMany()
     private List<Empleado> empleados;
 
     public Grupo() {

@@ -12,7 +12,6 @@
     <artifactId>api-gestion-empleados</artifactId>
     <version>0.0.1-SNAPSHOT</version>
     <name>gestion-empleados</name>
-    <packaging>jar</packaging>
     <description>Micro servicio para la gestion de empleados</description>
     <properties>
         <java.version>11</java.version>
@@ -72,13 +71,13 @@
             </dependency>
         </dependencies>
     </dependencyManagement>
-    <build>
+   <!-- <build>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
             </plugin>
         </plugins>
-    </build>
+    </build>-->
 
 </project>

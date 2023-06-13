@@ -30,7 +30,7 @@ public class GatewayConfig {
     public RouteLocator routes(RouteLocatorBuilder builder) {
         return builder.routes().route("empleados", r -> r.path("/api/1.0/empleados/**", "/api/1.0/grupos/**").filters(f -> f.filter(filter)).uri("lb://empleados"))
                 .route("auth", r -> r.path("/api/1.0/auth/**").filters(f -> f.filter(filter)).uri("lb://auth"))
-                .route("ordenes", r -> r.path("/api/1.0/equipos/**", "/api/1.0/equipos/**").filters(f -> f.filter(filter)).uri("lb://ordenes")).build();
+                .route("ordenes", r -> r.path("/api/1.0/equipos/**", "/api/1.0/ordenes/**").filters(f -> f.filter(filter)).uri("lb://ordenes")).build();
     }
 
     @Bean

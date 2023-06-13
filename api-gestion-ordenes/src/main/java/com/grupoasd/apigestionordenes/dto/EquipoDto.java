@@ -33,12 +33,17 @@ public class EquipoDto {
     /**
      * Campo fecha_registro.
      */
-    private Date fechaRegistro;
+    private String fechaRegistro;
 
     /**
      * Campo estado.
      */
-    private Long estado;
+    private String estado;
+
+    /**
+     * Campo orden_id.
+     */
+    private long ordenId;
 
     /**
      * Campo mensaje.
@@ -48,8 +53,8 @@ public class EquipoDto {
     public EquipoDto() {
     }
 
-    public EquipoDto(long equipoId, String nombre, String marca, String codigoBarras, Date fechaRegistro,
-            Long estado, String mensaje) {
+    public EquipoDto(long equipoId, String nombre, String marca, String codigoBarras, String fechaRegistro,
+            String estado, String mensaje) {
         super();
         this.equipoId = equipoId;
         this.nombre = nombre;
@@ -96,20 +101,28 @@ public class EquipoDto {
         this.codigoBarras = codigoBarras;
     }
 
-    public Date getFechaRegistro() {
+    public String getFechaRegistro() {
         return fechaRegistro;
     }
 
-    public void setFechaRegistro(Date fechaRegistro) {
+    public void setFechaRegistro(String fechaRegistro) {
         this.fechaRegistro = fechaRegistro;
     }
 
-    public Long getEstado() {
+    public String getEstado() {
         return estado;
     }
 
-    public void setEstado(Long estado) {
+    public void setEstado(String estado) {
         this.estado = estado;
+    }
+
+    public long getOrdenId() {
+        return ordenId;
+    }
+
+    public void setOrdenId(long ordenId) {
+        this.ordenId = ordenId;
     }
 
     public String getMensaje() {

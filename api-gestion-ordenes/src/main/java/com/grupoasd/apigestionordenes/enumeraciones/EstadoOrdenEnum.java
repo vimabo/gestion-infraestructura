@@ -13,10 +13,10 @@ public enum EstadoOrdenEnum {
         this.nombre = nombre;
     }
 
-    public static EstadoOrdenEnum getValueOf(Long id) {
+    public static EstadoOrdenEnum getValueOf(String nombre) {
 
         for (EstadoOrdenEnum estadoEquipo : EstadoOrdenEnum.values()) {
-            if (estadoEquipo.getId().equals(id)) {
+            if (estadoEquipo.getNombre().equals(nombre)) {
                 return estadoEquipo;
             }
         }
